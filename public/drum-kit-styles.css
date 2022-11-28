@@ -6,6 +6,7 @@ html {
   margin: 0;
   font-family: "Patrick Hand", cursive;
   background-color: #fffbb2;
+  touch-action: manipulation;
 }
 
 /* Set styles shared by all drum kit containers */
