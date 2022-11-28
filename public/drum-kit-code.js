@@ -81,8 +81,7 @@ const createDrumKit = () => {
   drum.audioBuffer = await fetch(drum.audioFile)
     .then(res => res.arrayBuffer())
     .then(ArrayBuffer => context.decodeAudioData(ArrayBuffer));
-
-    console.log("audio buffer", drum.audioBuffer);
+    
       document.addEventListener("keydown", (event) => {
         if (drum.key === event.key.toLowerCase()) {
           playAudioFile(drum.audioBuffer, button);
