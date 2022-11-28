@@ -1,3 +1,4 @@
+const context = new AudioContext();
 
 const createDrumKit = () => {
   const drums = [
@@ -57,10 +58,11 @@ const createDrumKit = () => {
     },
   ];
 
-  const playAudioFile = (audioElement, button) => {
-    audioElement.pause();
-    audioElement.currentTime = 0;
-    audioElement.play();
+  const playAudioFile = (audioBuffer, button) => {
+    const source = context.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(context.destination);
+    source.start();
     button.classList.add("playing");
     setTimeout(() => {
       button.classList.remove("playing");
@@ -68,19 +70,26 @@ const createDrumKit = () => {
   };
 
   const createButtons = async () => {
+
     for (let drum of drums) {
       const button = document.createElement("button");
       const textNode = document.createTextNode(drum.buttonTitle);
       button.appendChild(textNode);
       drum.audioElement = new Audio(drum.audioFile);
       drum.audioElement.volume = drum.volume;
+
+  drum.audioBuffer = await fetch(drum.audioFile)
+    .then(res => res.arrayBuffer())
+    .then(ArrayBuffer => context.decodeAudioData(ArrayBuffer));
+
+    console.log("audio buffer", drum.audioBuffer);
       document.addEventListener("keydown", (event) => {
         if (drum.key === event.key.toLowerCase()) {
-          playAudioFile(drum.audioElement, button);
+          playAudioFile(drum.audioBuffer, button);
         }
       });
       button.addEventListener("click", (event) => {
-        playAudioFile(drum.audioElement, button);
+        playAudioFile(drum.audioBuffer, button);
       });
       document.querySelector(".drums").appendChild(button);
     }
